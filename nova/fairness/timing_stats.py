@@ -1,7 +1,7 @@
 import csv
 import time
 
-from oslo.config import cfg
+from oslo_config import cfg
 
 CONF = cfg.CONF
 CONF.import_group('fairness', 'nova.fairness')

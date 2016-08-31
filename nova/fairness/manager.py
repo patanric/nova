@@ -17,8 +17,8 @@ import os
 import Queue
 import sys
 
-from oslo import messaging
-from oslo.config import cfg
+import oslo_messaging as messaging
+from oslo_config import cfg
 
 from nova import context
 from nova import exception
@@ -34,10 +34,10 @@ from nova.fairness import resource_allocation
 from nova.fairness import rui_stats
 from nova.fairness import timing_stats
 from nova.objects import instance as instance_objects
-from nova.openstack.common import importutils
-from nova.openstack.common import log as logging
-from nova.openstack.common import periodic_task
-from nova.openstack.common import timeutils
+from oslo_utils import importutils
+from oslo_log import log as logging
+from oslo_service import periodic_task
+from oslo_utils import timeutils
 from nova.virt import driver
 from nova.virt import virtapi
 

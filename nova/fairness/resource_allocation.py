@@ -2,12 +2,12 @@ import binascii
 import re
 import socket
 
-from oslo.config import cfg
+from oslo_config import cfg
 from xml.dom import minidom
 
 from nova import utils
-from nova.openstack.common import log as logging
-from nova.openstack.common import processutils
+from oslo_log import log as logging
+from oslo_concurrency import processutils
 from nova.virt import driver
 from nova.virt import virtapi
 

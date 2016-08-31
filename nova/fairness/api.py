@@ -13,7 +13,7 @@
 """Handles Fairness API requests."""
 
 import inspect
-from oslo.config import cfg
+from oslo_config import cfg
 
 from nova.fairness import metrics
 from nova.fairness import rpcapi

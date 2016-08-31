@@ -3,7 +3,7 @@ import multiprocessing
 import re
 import time
 
-from oslo.config import cfg
+from oslo_config import cfg
 
 from nova import context
 from nova import exception
@@ -11,9 +11,9 @@ from nova import servicegroup
 from nova import utils
 from nova.fairness import metrics
 from nova.objects import instance as instance_objects
-from nova.openstack.common import jsonutils
-from nova.openstack.common import log as logging
-from nova.openstack.common import processutils
+from oslo_serialization import jsonutils
+from oslo_log import log as logging
+from oslo_concurrency import processutils
 
 
 cloud_supply_opts = [

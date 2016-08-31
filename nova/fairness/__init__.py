@@ -20,13 +20,14 @@
               these metrics and enforce fairness on compute host.
 """
 
-import nova.openstack.common.importutils
+# import nova.openstack.common.importutils
+from oslo_utils import importutils
 
 
 FAIRNESS_API = 'nova.fairness.api.API'
 
 
 def API(*args, **kwargs):
-    importutils = nova.openstack.common.importutils
+    # importutils = nova.openstack.common.importutils
     class_name = FAIRNESS_API
     return importutils.import_object(class_name, *args, **kwargs)

@@ -19,15 +19,15 @@
 import sys
 import traceback
 
-from oslo.config import cfg
+from oslo_config import cfg
 
 import nova.db.api
 from nova import config
 from nova import exception
 from nova.i18n import _
-from nova.openstack.common import log as logging
+from oslo_log import log as logging
 from nova.conductor import rpcapi as conductor_rpcapi
-from nova.openstack.common.report import guru_meditation_report as gmr
+from oslo_reports import guru_meditation_report as gmr
 from nova import utils
 from nova import service
 from nova import objects

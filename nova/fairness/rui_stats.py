@@ -1,7 +1,7 @@
 import csv
 import time
 
-from oslo.config import cfg
+from oslo_config import cfg
 
 from nova.fairness import metrics
 

@@ -22,34 +22,35 @@ from nova import compute
 from nova import exception
 from nova.api.openstack.compute.views import addresses as view_addresses
 from nova.api.openstack import wsgi
-from nova.api.openstack import xmlutil
+# from nova.api.openstack import xmlutil
+# xmlutil was for serialize/deserialize of request data (everythin what over API is sent.)
 from nova.i18n import _
 
 
-class ActionDeserializer(wsgi.MetadataXMLDeserializer):
-    """Deserializer to handle xml-formatted server action requests.
-
-    Handles standard server attributes as well as optional metadata
-    and personality attributes
-    """
-
-    def default(self, string):
-        dom = xmlutil.safe_minidom_parse_string(string)
-        action_node = dom.childNodes[0]
-        action_name = action_node.tagName
-
-        return {'body': {action_name: 'null'}}
-
-
-class MappersTemplate(xmlutil.TemplateBuilder):
-    def construct(self):
-        root = xmlutil.TemplateElement('metrics')
-        elem = xmlutil.SubTemplateElement(root, 'mapper', selector='metrics')
-        elem.set('name')
-        elem.set('description')
-        return xmlutil.MasterTemplate(root, 1, nsmap=mapper_nsmap)
-
-    mapper_nsmap = {None: xmlutil.XMLNS_V11, 'atom': xmlutil.XMLNS_ATOM}
+# class ActionDeserializer(wsgi.MetadataXMLDeserializer):
+#     """Deserializer to handle xml-formatted server action requests.
+#
+#     Handles standard server attributes as well as optional metadata
+#     and personality attributes
+#     """
+#
+#     def default(self, string):
+#         dom = xmlutil.safe_minidom_parse_string(string)
+#         action_node = dom.childNodes[0]
+#         action_name = action_node.tagName
+#
+#         return {'body': {action_name: 'null'}}
+#
+#
+# class MappersTemplate(xmlutil.TemplateBuilder):
+#     def construct(self):
+#         root = xmlutil.TemplateElement('metrics')
+#         elem = xmlutil.SubTemplateElement(root, 'mapper', selector='metrics')
+#         elem.set('name')
+#         elem.set('description')
+#         return xmlutil.MasterTemplate(root, 1, nsmap=mapper_nsmap)
+#
+#     mapper_nsmap = {None: xmlutil.XMLNS_V11, 'atom': xmlutil.XMLNS_ATOM}
 
 
 class Controller(wsgi.Controller):
@@ -72,7 +73,7 @@ class Controller(wsgi.Controller):
                 return True
         return False
 
-    @wsgi.serializers(xml=MappersTemplate)
+    # @wsgi.serializers(xml=MappersTemplate)
     def index(self, req):
         """ List possible fairness metrics that can be used.
 
@@ -87,8 +88,8 @@ class Controller(wsgi.Controller):
         return metrics
 
     @wsgi.response(202)
-    @wsgi.serializers(xml=MappersTemplate)
-    @wsgi.deserializers(xml=ActionDeserializer)
+    # @wsgi.serializers(xml=MappersTemplate)
+    # @wsgi.deserializers(xml=ActionDeserializer)
     @wsgi.action('set-metric')
     def _set_metric(self, req, id, body):
         """ Set the metric for a specific compute host

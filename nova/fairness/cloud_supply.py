@@ -433,26 +433,26 @@ class CloudSupply(object):
                 if host not in fairness_hosts and not host == self.host:
                     del self._remote_supplies[host]
 
-    def _all_host_supplies_collected(self):
-        """ Check if host supplies for all online hosts exist
-
-        All hosts running the fairness service are queried through the nova
-        conductor and True is returned, if all hosts are present in
-        self._remote_supplies, False otherwise
-
-        :return: True if host supplies for all online hosts exist
-        :rtype: bool
-        """
-        fairness_hosts = self.servicegroup_api.get_all("fairness")
-        if not isinstance(fairness_hosts, exception.ServiceGroupUnavailable):
-            # Check if all hosts are present in the self._remote_supplies
-            # dictionary.
-            for host in fairness_hosts:
-                if host not in self._remote_supplies:
-                    return False
-            return True
-        else:
-            return False
+    # def _all_host_supplies_collected(self):
+    #     """ Check if host supplies for all online hosts exist
+	#
+    #     All hosts running the fairness service are queried through the nova
+    #     conductor and True is returned, if all hosts are present in
+    #     self._remote_supplies, False otherwise
+	#
+    #     :return: True if host supplies for all online hosts exist
+    #     :rtype: bool
+    #     """
+    #     fairness_hosts = self.servicegroup_api.get_all("fairness")
+    #     if not isinstance(fairness_hosts, exception.ServiceGroupUnavailable):
+    #         # Check if all hosts are present in the self._remote_supplies
+    #         # dictionary.
+    #         for host in fairness_hosts:
+    #             if host not in self._remote_supplies:
+    #                 return False
+    #         return True
+    #     else:
+    #         return False
 
     def check_readiness(self):
         if self._all_host_supplies_collected():

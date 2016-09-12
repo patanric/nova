@@ -179,7 +179,7 @@ class CloudSupply(object):
         :return: Number of users
         :rtype: int
         """
-        fairness_hosts = self.servicegroup_api.get_all("fairness")
+        fairness_hosts = get_all(self.servicegroup_api, "fairness")
         user_ids = set()
         if not isinstance(fairness_hosts, nova.fairness.exception.ServiceGroupUnavailable):
             for host in fairness_hosts:
@@ -198,7 +198,7 @@ class CloudSupply(object):
         :rtype: list
         """
         missing_hosts = list()
-        fairness_hosts = self.servicegroup_api.get_all("fairness")
+        fairness_hosts = get_all(self.servicegroup_api, "fairness")
         if not isinstance(fairness_hosts, nova.fairness.exception.ServiceGroupUnavailable):
             for host in fairness_hosts:
                 if host not in self._remote_supplies:
@@ -428,7 +428,7 @@ class CloudSupply(object):
         conductor and hosts, which are in self._remote_supplies but not in the
         queried list are removed from self._remote_supplies
         """
-        fairness_hosts = self.servicegroup_api.get_all("fairness")
+        fairness_hosts = get_all(self.servicegroup_api, "fairness")
         if not isinstance(fairness_hosts, nova.fairness.exception.ServiceGroupUnavailable):
             remote_supplies = dict.copy(self._remote_supplies)
             for host, supply in remote_supplies.iteritems():

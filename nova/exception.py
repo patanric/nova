@@ -26,15 +26,14 @@ import functools
 import inspect
 import sys
 
+import six
+import webob.exc
+from nova import safe_utils
+from nova.i18n import _, _LE
 from oslo_config import cfg
 from oslo_log import log as logging
 from oslo_utils import excutils
-import six
-import webob.exc
 from webob import util as woutil
-
-from nova.i18n import _, _LE
-from nova import safe_utils
 
 LOG = logging.getLogger(__name__)
 
@@ -1388,9 +1387,6 @@ class VolumeSmallerThanMinDisk(FlavorDiskTooSmall):
                 "metadata. Volume size is %(volume_size)i bytes, minimum "
                 "size is %(image_min_disk)i bytes.")
 
-class ServiceGroupUnavailable(NovaException):
-    msg_fmt = _("The service from servicegroup driver %(driver)s is "
-                "temporarily unavailable.")
 
 class InsufficientFreeMemory(NovaException):
     msg_fmt = _("Insufficient free memory on compute node to start %(uuid)s.")

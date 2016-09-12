@@ -86,12 +86,3 @@ class API(object):
             return False
 
         return self._driver.is_up(member)
-
-    def get_all(self, group_id):
-        """Returns ALL members of the given group."""
-        LOG.debug('Returns ALL members of the [%s] '
-                  'ServiceGroup', group_id)
-        if group_id == "fairness":
-            CONF.import_opt('host', 'nova.netconf')
-            return [unicode(CONF.host)]
-        return self._driver.get_all(group_id)

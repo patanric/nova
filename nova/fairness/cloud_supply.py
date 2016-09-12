@@ -1,5 +1,7 @@
 from datetime import datetime
 import multiprocessing
+
+import nova.fairness.exception
 import re
 import time
 
@@ -179,7 +181,7 @@ class CloudSupply(object):
         """
         fairness_hosts = self.servicegroup_api.get_all("fairness")
         user_ids = set()
-        if not isinstance(fairness_hosts, exception.ServiceGroupUnavailable):
+        if not isinstance(fairness_hosts, nova.fairness.exception.ServiceGroupUnavailable):
             for host in fairness_hosts:
                 ctxt = context.RequestContext(None, None, is_admin=True)
                 instances = instance_objects.InstanceList().\
@@ -197,7 +199,7 @@ class CloudSupply(object):
         """
         missing_hosts = list()
         fairness_hosts = self.servicegroup_api.get_all("fairness")
-        if not isinstance(fairness_hosts, exception.ServiceGroupUnavailable):
+        if not isinstance(fairness_hosts, nova.fairness.exception.ServiceGroupUnavailable):
             for host in fairness_hosts:
                 if host not in self._remote_supplies:
                     missing_hosts.append(host)
@@ -427,7 +429,7 @@ class CloudSupply(object):
         queried list are removed from self._remote_supplies
         """
         fairness_hosts = self.servicegroup_api.get_all("fairness")
-        if not isinstance(fairness_hosts, exception.ServiceGroupUnavailable):
+        if not isinstance(fairness_hosts, nova.fairness.exception.ServiceGroupUnavailable):
             remote_supplies = dict.copy(self._remote_supplies)
             for host, supply in remote_supplies.iteritems():
                 if host not in fairness_hosts and not host == self.host:
@@ -443,8 +445,8 @@ class CloudSupply(object):
         :return: True if host supplies for all online hosts exist
         :rtype: bool
         """
-        fairness_hosts = self.servicegroup_api.get_all("fairness")
-        if not isinstance(fairness_hosts, exception.ServiceGroupUnavailable):
+        fairness_hosts = get_all(self.servicegroup_api, "fairness")
+        if not isinstance(fairness_hosts, nova.fairness.exception.ServiceGroupUnavailable):
             # Check if all hosts are present in the self._remote_supplies
             # dictionary.
             for host in fairness_hosts:
@@ -488,3 +490,12 @@ class CloudSupply(object):
                 LOG.debug("Updated host supply for host " +
                           supply.compute_host + ".")
         self.check_readiness()
+
+def get_all(self, group_id):
+	"""Returns ALL members of the given group."""
+	servicegroup.api.LOG.debug('Returns ALL members of the [%s] '
+			  'ServiceGroup', group_id)
+	if group_id == "fairness":
+		servicegroup.api.CONF.import_opt('host', 'nova.netconf')
+		return [unicode(servicegroup.api.CONF.host)]
+	return self._driver.get_all(group_id)

@@ -13,6 +13,8 @@
 """Fairness Service."""
 
 import libvirt
+
+import nova.fairness.exception
 import os
 import Queue
 import sys
@@ -522,7 +524,7 @@ class FairnessManager(manager.Manager):
                                    norm[3], norm[4], norm[5])
         del result['global_norm']
         fairness_hosts = self.servicegroup_api.get_all("fairness")
-        if not isinstance(fairness_hosts, exception.ServiceGroupUnavailable):
+        if not isinstance(fairness_hosts, nova.fairness.exception.ServiceGroupUnavailable):
             ctxt = context.RequestContext(None, None, remote_address=self.host)
             for host in fairness_hosts:
                 if host != self.host:
@@ -576,7 +578,7 @@ class FairnessManager(manager.Manager):
         :rtype: bool
         """
         fairness_hosts = self.servicegroup_api.get_all("fairness")
-        if not isinstance(fairness_hosts, exception.ServiceGroupUnavailable):
+        if not isinstance(fairness_hosts, nova.fairness.exception.ServiceGroupUnavailable):
             _local_heavinesses = dict.copy(self._fairness_heavinesses)
             for host in _local_heavinesses:
                 if host not in fairness_hosts:
@@ -617,7 +619,7 @@ class FairnessManager(manager.Manager):
         :type host: str
         """
         fairness_hosts = self.servicegroup_api.get_all("fairness")
-        if not isinstance(fairness_hosts, exception.ServiceGroupUnavailable):
+        if not isinstance(fairness_hosts, nova.fairness.exception.ServiceGroupUnavailable):
             if (host is not None and
                     host != self.host and
                     host in fairness_hosts):

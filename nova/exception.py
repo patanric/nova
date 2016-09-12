@@ -1388,6 +1388,9 @@ class VolumeSmallerThanMinDisk(FlavorDiskTooSmall):
                 "metadata. Volume size is %(volume_size)i bytes, minimum "
                 "size is %(image_min_disk)i bytes.")
 
+class ServiceGroupUnavailable(NovaException):
+    msg_fmt = _("The service from servicegroup driver %(driver)s is "
+                "temporarily unavailable.")
 
 class InsufficientFreeMemory(NovaException):
     msg_fmt = _("Insufficient free memory on compute node to start %(uuid)s.")

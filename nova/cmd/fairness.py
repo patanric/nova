@@ -60,6 +60,8 @@ def block_db_access():
 
 
 def main():
+    import pdb
+    pdb.set_trace()
     config.parse_args(sys.argv)
     logging.setup(CONF, "nova")
     utils.monkey_patch()

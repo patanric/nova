@@ -362,6 +362,7 @@ class FairnessManager(manager.Manager):
         :type ctxt: nova.context.RequestContext
         """
         if self._cloud_supply.ready:
+            import pdb; pdb.set_trace()
             self._timing_stats.start_timing("rui_setup")
             self._rui_collection_helper.start()
             instances = instance_objects.InstanceList().get_by_host(ctxt,

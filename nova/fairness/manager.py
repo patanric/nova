@@ -341,8 +341,6 @@ class FairnessManager(manager.Manager):
         :param ctxt: The periodic task context
         :type ctxt: nova.context.RequestContext
         """
-        import pdb
-        pdb.set_trace()
         self._cloud_supply.check_readiness()
         missing_hosts = self._cloud_supply.missing_hosts
         for host in missing_hosts:
@@ -373,8 +371,7 @@ class FairnessManager(manager.Manager):
                     self._cloud_supply.local_boot_time,
                     self._rui_collection_helper.last_collection_time())
                 _cloud_supply = self._cloud_supply.get_cloud_supply(host_uptime)
-                _local_supply = s
-                elf._cloud_supply.get_host_supply(host_uptime)
+                _local_supply = self._cloud_supply.get_host_supply(host_uptime)
             else:
                 _cloud_supply = self._cloud_supply.get_cloud_supply(
                     self._rui_collection_helper.interval())

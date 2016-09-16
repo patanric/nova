@@ -12,7 +12,7 @@
 
 """Fairness Service."""
 
-import libvirt
+from nova.virt import libvirt
 
 import nova.fairness.exception
 import os

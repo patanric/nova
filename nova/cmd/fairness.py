@@ -60,9 +60,7 @@ def block_db_access():
 
 
 def main():
-    import pdb
-    pdb.set_trace()
-    config.parse_args(sys.argv)
+    config.parse_args(sys.argv)     # p sys.argv = ['/usr/bin/nova-fairness', '--config-file=/etc/nova/nova.conf']
     logging.setup(CONF, "nova")
     utils.monkey_patch()
     objects.register_all()

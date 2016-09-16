@@ -59,7 +59,7 @@ def parse_args(argv, default_config_files=None, configure_db=True,
     debugger.register_cli_opts()
     config.set_middleware_defaults()
 
-    CONF(argv[1:],
+    CONF(argv[1:],  # --config-file=/etc/nova/nova.conf
          project='nova',
          version=version.version_string(),
          default_config_files=default_config_files)

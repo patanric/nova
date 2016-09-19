@@ -358,15 +358,15 @@ class CloudSupply(object):
         import pdb
         pdb.set_trace()
         host_supply = metrics.BaseMetric.ResourceInformation(
-            cpu_time = int(self._local_supply.cpu_cores_weighted * interval),
-            disk_bytes_read = int(self._local_supply.disk_speeds * interval),
-            disk_bytes_written = int(self._local_supply.disk_speeds * interval),
-            network_bytes_received =
+            cpu_time=int(self._local_supply.cpu_cores_weighted * interval),
+            disk_bytes_read=int(self._local_supply.disk_speeds * interval),
+            disk_bytes_written=int(self._local_supply.disk_speeds * interval),
+            network_bytes_received=
             int(self._local_supply.network_throughput * interval),
-            network_bytes_transmitted =
+            network_bytes_transmitted=
             int(self._local_supply.network_throughput * interval),
-            memory_used = self._local_supply.memory_used,
-            compute_host = self.host)
+            memory_used=self._local_supply.memory_used,
+            compute_host=self.host)
 
         return host_supply
 

@@ -362,8 +362,6 @@ class FairnessManager(manager.Manager):
         :param ctxt: The periodic task context
         :type ctxt: nova.context.RequestContext
         """
-        import pdb
-        pdb.set_trace()
         if self._cloud_supply.ready:
             self._timing_stats.start_timing("rui_setup")
             self._rui_collection_helper.start()
@@ -494,6 +492,8 @@ class FairnessManager(manager.Manager):
                 # it for the global norm
                 _cloud_supply *= self._cloud_supply.get_overcommitment()
                 self._timing_stats.start_timing("heaviness")
+                import pdb
+                pdb.set_trace()
                 self._map_rui(
                         _cloud_supply,
                         _instance_endowments,

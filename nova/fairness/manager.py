@@ -492,8 +492,8 @@ class FairnessManager(manager.Manager):
                 # it for the global norm
                 _cloud_supply *= self._cloud_supply.get_overcommitment()
                 self._timing_stats.start_timing("heaviness")
-                import pdb
-                pdb.set_trace()
+                # import pdb
+                # pdb.set_trace()
                 self._map_rui(
                         _cloud_supply,
                         _instance_endowments,

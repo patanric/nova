@@ -358,15 +358,15 @@ class CloudSupply(object):
         import pdb
         pdb.set_trace()
         host_supply = metrics.BaseMetric.ResourceInformation(
-            cpu_time=int(self._local_supply.cpu_cores_weighted * interval),
-            disk_bytes_read=int(self._local_supply.disk_speeds * interval),
-            disk_bytes_written=int(self._local_supply.disk_speeds * interval),
-            network_bytes_received=
+            cpu_time = int(self._local_supply.cpu_cores_weighted * interval),
+            disk_bytes_read = int(self._local_supply.disk_speeds * interval),
+            disk_bytes_written = int(self._local_supply.disk_speeds * interval),
+            network_bytes_received =
             int(self._local_supply.network_throughput * interval),
-            network_bytes_transmitted=
+            network_bytes_transmitted =
             int(self._local_supply.network_throughput * interval),
-            memory_used=self._local_supply.memory_used,
-            compute_host=self.host)
+            memory_used = self._local_supply.memory_used,
+            compute_host = self.host)
 
         return host_supply
 
@@ -493,11 +493,12 @@ class CloudSupply(object):
                           supply.compute_host + ".")
         self.check_readiness()
 
+
 def get_all(self, group_id):
-	"""Returns ALL members of the given group."""
-	servicegroup.api.LOG.debug('Returns ALL members of the [%s] '
-			  'ServiceGroup', group_id)
-	if group_id == "fairness":
-		servicegroup.api.CONF.import_opt('host', 'nova.netconf')
-		return [unicode(servicegroup.api.CONF.host)]
-	return self._driver.get_all(group_id)
+    """Returns ALL members of the given group."""
+    servicegroup.api.LOG.debug('Returns ALL members of the [%s] '
+              'ServiceGroup', group_id)
+    if group_id == "fairness":
+        servicegroup.api.CONF.import_opt('host', 'nova.netconf')
+        return [unicode(servicegroup.api.CONF.host)]
+    return self._driver.get_all(group_id)

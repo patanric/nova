@@ -109,8 +109,6 @@ class GreedinessMetric(BaseMetric):
             'Demands and endowments must have same shape'
         assert (endowments >= 0).all(),\
             'Endowments cannot be negative'
-        import pdb
-        pdb.set_trace()
         assert (np.sum(endowments, axis=0) <=
                 supply + self.floating_error).all(), \
             'Endowments exceed supply'
@@ -151,8 +149,6 @@ class GreedinessMetric(BaseMetric):
                                  supply.network_bytes_received,
                                  supply.network_bytes_transmitted,
                                  supply.memory_used])
-        import pdb
-        pdb.set_trace()
         demand_arrays = np.array([])
         endowment_arrays = np.array([])
         instance_infos = list()

@@ -355,6 +355,8 @@ class CloudSupply(object):
         :return: Host supply for the local host
         :rtype: nova.fairness.metrics.BaseMetric.ResourceInformation
         """
+        import pdb
+        pdb.set_trace()
         host_supply = metrics.BaseMetric.ResourceInformation(
             cpu_time=int(self._local_supply.cpu_cores_weighted * interval),
             disk_bytes_read=int(self._local_supply.disk_speeds * interval),

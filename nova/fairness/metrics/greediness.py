@@ -109,6 +109,8 @@ class GreedinessMetric(BaseMetric):
             'Demands and endowments must have same shape'
         assert (endowments >= 0).all(),\
             'Endowments cannot be negative'
+        import pdb
+        pdb.set_trace()
         assert (np.sum(endowments, axis=0) <=
                 supply + self.floating_error).all(), \
             'Endowments exceed supply'

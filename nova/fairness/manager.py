@@ -525,7 +525,8 @@ class FairnessManager(manager.Manager):
                                    norm[1], norm[2],
                                    norm[3], norm[4], norm[5])
         del result['global_norm']
-        fairness_hosts = self.servicegroup_api.get_all("fairness")
+        # fairness_hosts = self.servicegroup_api.get_all("fairness")
+        fairness_hosts = cloud_supply.get_all(self.servicegroup_api, "fairness")
         if not isinstance(fairness_hosts, nova.fairness.exception.ServiceGroupUnavailable):
             ctxt = context.RequestContext(None, None, remote_address=self.host)
             for host in fairness_hosts:
@@ -579,7 +580,8 @@ class FairnessManager(manager.Manager):
         :return: True if all heavinesses have been collected, False othwerwise
         :rtype: bool
         """
-        fairness_hosts = self.servicegroup_api.get_all("fairness")
+        # fairness_hosts = self.servicegroup_api.get_all("fairness")
+        fairness_hosts = cloud_supply.get_all(self.servicegroup_api, "fairness")
         if not isinstance(fairness_hosts, nova.fairness.exception.ServiceGroupUnavailable):
             _local_heavinesses = dict.copy(self._fairness_heavinesses)
             for host in _local_heavinesses:
@@ -620,7 +622,8 @@ class FairnessManager(manager.Manager):
         :param host: Host to send the supply to
         :type host: str
         """
-        fairness_hosts = self.servicegroup_api.get_all("fairness")
+        # fairness_hosts = self.servicegroup_api.get_all("fairness")
+        fairness_hosts = cloud_supply.get_all(self.servicegroup_api, "fairness")
         if not isinstance(fairness_hosts, nova.fairness.exception.ServiceGroupUnavailable):
             if (host is not None and
                     host != self.host and

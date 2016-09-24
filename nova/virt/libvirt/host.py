@@ -463,8 +463,6 @@ class Host(object):
         LOG.debug('Connecting to libvirt: %s', self._uri)
         wrapped_conn = None
 
-        import pdb
-        pdb.set_trace()
         try:
             wrapped_conn = self._connect(self._uri, self._read_only)
         finally:
@@ -474,6 +472,8 @@ class Host(object):
             if not wrapped_conn:
                 disable_reason = 'Failed to connect to libvirt'
 
+            import pdb
+            pdb.set_trace()
             if self._conn_event_handler is not None:
                 self._conn_event_handler(bool(wrapped_conn), disable_reason)
 

@@ -472,13 +472,13 @@ class Host(object):
             if not wrapped_conn:
                 disable_reason = 'Failed to connect to libvirt'
 
-            import pdb
-            pdb.set_trace()
             if self._conn_event_handler is not None:
                 self._conn_event_handler(bool(wrapped_conn), disable_reason)
 
         self._wrapped_conn = wrapped_conn
 
+        import pdb
+        pdb.set_trace()
         try:
             LOG.debug("Registering for lifecycle events %s", self)
             wrapped_conn.domainEventRegisterAny(

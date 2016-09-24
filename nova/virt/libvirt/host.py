@@ -463,6 +463,8 @@ class Host(object):
         LOG.debug('Connecting to libvirt: %s', self._uri)
         wrapped_conn = None
 
+        import pdb
+        pdb.set_trace()
         try:
             wrapped_conn = self._connect(self._uri, self._read_only)
         finally:

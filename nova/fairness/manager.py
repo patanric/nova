@@ -362,8 +362,6 @@ class FairnessManager(manager.Manager):
         :param ctxt: The periodic task context
         :type ctxt: nova.context.RequestContext
         """
-        import pdb
-        pdb.set_trace()
         if self._cloud_supply.ready:
             self._timing_stats.start_timing("rui_setup")
             self._rui_collection_helper.start()
@@ -670,6 +668,8 @@ def _lookup_by_name(self, instance_name):
     relevant nova exceptions should be raised in response.
 
     """
+    import pdb
+    pdb.set_trace()
     try:
         return self._conn.lookupByName(instance_name)
     except libvirt.libvirtError as ex:

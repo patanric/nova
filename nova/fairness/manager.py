@@ -668,6 +668,8 @@ def _lookup_by_name(self, instance_name):
     relevant nova exceptions should be raised in response.
 
     """
+    import pdb
+    pdb.set_trace()
     try:
         return self._conn.lookupByName(instance_name)
     except libvirt.libvirtError as ex:

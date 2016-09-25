@@ -477,8 +477,6 @@ class Host(object):
 
         self._wrapped_conn = wrapped_conn
 
-        import pdb
-        pdb.set_trace()
         try:
             LOG.debug("Registering for lifecycle events %s", self)
             wrapped_conn.domainEventRegisterAny(

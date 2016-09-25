@@ -86,6 +86,8 @@ class GreedinessMetric(BaseMetric):
         :return: Global norm
         :rtype: numpy.array
         """
+        import pdb
+        pdb.set_trace()
 
         assert isinstance(supply, np.ndarray), \
             'First parameter must be np.array'

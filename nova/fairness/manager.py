@@ -490,8 +490,8 @@ class FairnessManager(manager.Manager):
                     and self._rui_collection_helper.interval() is not None:
                 # Add the overcommitment to the cloud supply to consider
                 # it for the global norm
-                for k in self._cloud_supply.get_overcommitment():
-                    assert k > 0, "STOP!!!"
+                #for k in self._cloud_supply.get_overcommitment():
+                #    assert k > 0, "STOP!!!"
                 _cloud_supply *= self._cloud_supply.get_overcommitment()
                 self._timing_stats.start_timing("heaviness")
                 self._map_rui(

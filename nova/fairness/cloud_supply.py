@@ -409,15 +409,20 @@ class CloudSupply(object):
         :return: Overcommitment ratios
         :rtype: nova.fairness.metrics.BaseMetric.ResourceInformation
         """
+        # TODO: get the default rations for cpu, disk and ram overcommitment.
         overcommitment = metrics.BaseMetric.ResourceInformation(
                 0, 0, 0, 0, 0, 0)
 
+        # overcommitment.cpu_time = CONF.cpu_allocation_ratio
         overcommitment.cpu_time = 16.0
-        overcommitment.disk_bytes_read = CONF.disk_allocation_ratio
-        overcommitment.disk_bytes_written = CONF.disk_allocation_ratio
+        # overcommitment.disk_bytes_read = CONF.disk_allocation_ratio
+        overcommitment.disk_bytes_read = 1.0
+        # overcommitment.disk_bytes_written = CONF.disk_allocation_ratio
+        overcommitment.disk_bytes_written = 1.0
         overcommitment.network_bytes_received = 1
         overcommitment.network_bytes_transmitted = 1
-        overcommitment.memory_used = CONF.ram_allocation_ratio
+        # overcommitment.memory_used = CONF.ram_allocation_ratio
+        overcommitment.memory_used = 1.5
 
         return overcommitment
 

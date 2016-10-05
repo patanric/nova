@@ -412,7 +412,7 @@ class CloudSupply(object):
         overcommitment = metrics.BaseMetric.ResourceInformation(
                 0, 0, 0, 0, 0, 0)
 
-        overcommitment.cpu_time = CONF.cpu_allocation_ratio
+        overcommitment.cpu_time = 16.0
         overcommitment.disk_bytes_read = CONF.disk_allocation_ratio
         overcommitment.disk_bytes_written = CONF.disk_allocation_ratio
         overcommitment.network_bytes_received = 1

@@ -28,6 +28,7 @@ cloud_supply_opts = [
 CONF = cfg.CONF
 fairness_group = cfg.OptGroup("fairness", "Fairness configuration options")
 CONF.import_opt('host', 'nova.netconf')
+# TODO: nova.compute.resource_tracker seams not to work.
 CONF.import_opt('cpu_allocation_ratio', 'nova.compute.resource_tracker')
 CONF.import_opt('ram_allocation_ratio', 'nova.compute.resource_tracker')
 CONF.import_opt('disk_allocation_ratio', 'nova.compute.resource_tracker')
@@ -409,7 +410,7 @@ class CloudSupply(object):
         :return: Overcommitment ratios
         :rtype: nova.fairness.metrics.BaseMetric.ResourceInformation
         """
-        # TODO: get the default rations for cpu, disk and ram overcommitment.
+        # TODO: get the default rations for cpu, disk and ram overcommitment. May be contact sbauza: (nova-fairness/nova/objects/compute_node.py)
         overcommitment = metrics.BaseMetric.ResourceInformation(
                 0, 0, 0, 0, 0, 0)
 

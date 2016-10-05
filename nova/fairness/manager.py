@@ -12,18 +12,20 @@
 
 """Fairness Service."""
 
-import libvirt
-
-import nova.fairness.exception
-import os
 import Queue
+import os
 import sys
 
+import libvirt
 import oslo_messaging as messaging
 from oslo_config import cfg
+from oslo_log import log as logging
+from oslo_service import periodic_task
+from oslo_utils import importutils
+from oslo_utils import timeutils
 
+import nova.fairness.exception
 from nova import context
-from nova import exception
 from nova import manager
 from nova import rpc
 from nova import servicegroup
@@ -35,14 +37,10 @@ from nova.fairness import metrics
 from nova.fairness import resource_allocation
 from nova.fairness import rui_stats
 from nova.fairness import timing_stats
+from nova.fairness.utilities import _lookup_by_name
 from nova.objects import instance as instance_objects
-from oslo_utils import importutils
-from oslo_log import log as logging
-from oslo_service import periodic_task
-from oslo_utils import timeutils
 from nova.virt import driver
 from nova.virt import virtapi
-from nova.i18n import _
 
 fairness_manager_opts = [
     cfg.StrOpt('active_metric',
@@ -663,23 +661,3 @@ class FairnessManager(manager.Manager):
         self._send_host_supply(ctxt.remote_address)
 
 
-def _lookup_by_name(self, instance_name):
-    """Retrieve libvirt domain object given an instance name.
-
-    All libvirt error handling should be handled in this method and
-    relevant nova exceptions should be raised in response.
-
-    """
-    try:
-        return self._conn.lookupByName(instance_name)
-    except libvirt.libvirtError as ex:
-        error_code = ex.get_error_code()
-        if error_code == libvirt.VIR_ERR_NO_DOMAIN:
-            raise exception.InstanceNotFound(instance_id=instance_name)
-
-        msg = (_('Error from libvirt while looking up %(instance_name)s: '
-                 '[Error Code %(error_code)s] %(ex)s') %
-               {'instance_name': instance_name,
-                'error_code': error_code,
-                'ex': ex})
-        raise exception.NovaException(msg)

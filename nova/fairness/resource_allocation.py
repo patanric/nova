@@ -10,6 +10,7 @@ from oslo_log import log as logging
 from oslo_concurrency import processutils
 from nova.virt import driver
 from nova.virt import virtapi
+from nova.fairness.utilities import _lookup_by_name
 
 resource_allocation_opts = [
     cfg.IntOpt('htb_rate',
@@ -240,7 +241,7 @@ class ResourceAllocation(object):
         :type instance_name: str
         """
 
-        domain = self.driver._lookup_by_name(instance_name)
+        domain = _lookup_by_name(self.driver, instance_name)
 
         return domain.schedulerParameters()['cpu_shares']
 
@@ -256,7 +257,7 @@ class ResourceAllocation(object):
         :type priority: int
         """
 
-        domain = self.driver._lookup_by_name(instance_name)
+        domain = _lookup_by_name(self.driver, instance_name)
         cpu_shares = self._convert_priority_range(priority, 1, 100)
 
         params = domain.schedulerParameters()
@@ -273,7 +274,7 @@ class ResourceAllocation(object):
         :type instance_name: str
         """
 
-        domain = self.driver._lookup_by_name(instance_name)
+        domain = _lookup_by_name(self.driver, instance_name)
 
         return domain.memoryParameters()['soft_limit']
 
@@ -289,7 +290,7 @@ class ResourceAllocation(object):
         :type priority: int
         """
 
-        domain = self.driver._lookup_by_name(instance_name)
+        domain = _lookup_by_name(self.driver, instance_name)
         total_memory = domain.maxMemory()
         softlimit = self._convert_priority_range(priority, 10240, total_memory)
         result = domain.setMemoryParameters(
@@ -305,7 +306,7 @@ class ResourceAllocation(object):
         :type instance_name: str
         """
 
-        domain = self.driver._lookup_by_name(instance_name)
+        domain = _lookup_by_name(self.driver, instance_name)
 
         return domain.blkioParameters()['weight']
 
@@ -320,7 +321,7 @@ class ResourceAllocation(object):
                          as highest and 50 as lowest priority
         :type priority: int
         """
-        domain = self.driver._lookup_by_name(instance_name)
+        domain = _lookup_by_name(self.driver, instance_name)
 
         io_weight = self._convert_priority_range(priority, 100, 1000)
         params = domain.blkioParameters()
@@ -336,7 +337,7 @@ class ResourceAllocation(object):
         :type instance_name: str
         """
 
-        domain = self.driver._lookup_by_name(instance_name)
+        domain = _lookup_by_name(self.driver, instance_name)
 
         ip = self._find_domain_ip(domain)
 
@@ -385,7 +386,7 @@ class ResourceAllocation(object):
         :type priority: int
         """
 
-        domain = self.driver._lookup_by_name(instance_name)
+        domain = _lookup_by_name(self.driver, instance_name)
         domains = self.driver._list_instance_domains()
         ips = [self._find_domain_ip(d) for d in domains]
         domain_ip = self._find_domain_ip(domain)

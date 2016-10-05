@@ -28,9 +28,9 @@ cloud_supply_opts = [
 CONF = cfg.CONF
 fairness_group = cfg.OptGroup("fairness", "Fairness configuration options")
 CONF.import_opt('host', 'nova.netconf')
-CONF.import_opt('cpu_allocation_ratio', 'nova.scheduler.filters.core_filter')
-CONF.import_opt('ram_allocation_ratio', 'nova.scheduler.filters.ram_filter')
-CONF.import_opt('disk_allocation_ratio', 'nova.scheduler.filters.disk_filter')
+CONF.import_opt('cpu_allocation_ratio', 'nova.compute.resource_tracker')
+CONF.import_opt('ram_allocation_ratio', 'nova.compute.resource_tracker')
+CONF.import_opt('disk_allocation_ratio', 'nova.compute.resource_tracker')
 CONF.register_group(fairness_group)
 CONF.register_opts(cloud_supply_opts, fairness_group)
 LOG = logging.getLogger(__name__)

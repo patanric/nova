@@ -87,12 +87,11 @@ CONF.register_opts(fairness_manager_opts, fairness_group)
 LOG = logging.getLogger(__name__)
 
 class FairnessManager(manager.Manager):
-    print "hello"
-#     """Manager to enforce cloud-wide, multi-resource fairness
-#
-#     The manager collects RUI and host supply information
-#     """
-#
+    """Manager to enforce cloud-wide, multi-resource fairness
+
+    The manager collects RUI and host supply information
+    """
+    print "Hello"
     class RUICollectionHelper(object):
 
         def __init__(self, rui_statistics):
@@ -244,37 +243,37 @@ class FairnessManager(manager.Manager):
             for instance_name in terminated_instances:
                 del self._endowments[instance_name]
             return self._endowments
-#
-#     target = messaging.Target(version='1.0')
-#
-#     def __init__(self, *args, **kwargs):
-#         self.fairness_api = fairness_api.API()
-#         self.compute_api = compute_api.API()
-#         self.compute_rpcapi = compute_rpcapi.ComputeAPI()
-#         self._active_metric = CONF.fairness.active_metric
-#
-#         super(FairnessManager, self).__init__(service_name='fairness',
-#                                               *args, **kwargs)
-#         self.driver = driver.load_compute_driver(virtapi.VirtAPI,
-#                                                  'libvirt.LibvirtDriver')
-#         self.client = rpc.get_client(self.target, '1.0')
-#         self.servicegroup_api = servicegroup.API()
-#         self._fairness_quota =\
-#             metrics.BaseMetric.ResourceInformation(0, 0, 0, 0, 0, 0)
-#         self._fairness_heavinesses = dict()
-#         self._global_norm =\
-#             metrics.BaseMetric.ResourceInformation(0, 0, 0, 0, 0, 0)
-#         self._rui_stats = rui_stats.RUIStats()
-#         self._timing_stats = timing_stats.TimingStats()
-#         self._rui_collection_helper = self.RUICollectionHelper(self._rui_stats)
-#         self._cloud_supply = cloud_supply.CloudSupply()
-#         self._resource_allocation = \
-#             resource_allocation.ResourceAllocation(
-#                 self._fairness_heavinesses,
-#                 self._rui_stats,
-#                 self._timing_stats,
-#                 self._fairness_quota,
-#                 self._global_norm)
+
+    target = messaging.Target(version='1.0')
+
+    def __init__(self, *args, **kwargs):
+        self.fairness_api = fairness_api.API()
+        self.compute_api = compute_api.API()
+        self.compute_rpcapi = compute_rpcapi.ComputeAPI()
+        self._active_metric = CONF.fairness.active_metric
+
+        super(FairnessManager, self).__init__(service_name='fairness',
+                                              *args, **kwargs)
+        self.driver = driver.load_compute_driver(virtapi.VirtAPI,
+                                                 'libvirt.LibvirtDriver')
+        self.client = rpc.get_client(self.target, '1.0')
+        self.servicegroup_api = servicegroup.API()
+        self._fairness_quota =\
+            metrics.BaseMetric.ResourceInformation(0, 0, 0, 0, 0, 0)
+        self._fairness_heavinesses = dict()
+        self._global_norm =\
+            metrics.BaseMetric.ResourceInformation(0, 0, 0, 0, 0, 0)
+        self._rui_stats = rui_stats.RUIStats()
+        self._timing_stats = timing_stats.TimingStats()
+        self._rui_collection_helper = self.RUICollectionHelper(self._rui_stats)
+        self._cloud_supply = cloud_supply.CloudSupply()
+        self._resource_allocation = \
+            resource_allocation.ResourceAllocation(
+                self._fairness_heavinesses,
+                self._rui_stats,
+                self._timing_stats,
+                self._fairness_quota,
+                self._global_norm)
 #
 #     @staticmethod
 #     def _get_metric_class(metric_name):

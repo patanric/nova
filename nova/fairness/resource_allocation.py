@@ -259,8 +259,8 @@ class ResourceAllocation(object):
 
         domain = _lookup_by_name(self.driver, instance_name)
         cpu_shares = self._convert_priority_range(priority, 1, 100)
-
-        params = domain.schedulerParameters()
+        domain.blkioParameters
+        params = domain.schedulerParameters
         params['cpu_shares'] = long(cpu_shares)
 
         result = domain.setSchedulerParameters(params)

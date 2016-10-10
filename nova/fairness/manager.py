@@ -543,35 +543,36 @@ class FairnessManager(manager.Manager):
                                      heavinesses=dict.copy(result))
             # Save own heavinesses without sending them through an RPC
             # to conserve bandwidth
-            # self.receive_heavinesses(ctxt, result)
-#
-#     def _add_heavinesses(self, heavinesses):
-#         """ Add heavinesses received from a compute host
-#
-#         The heavinesses for all instances of a host are stored into a queue
-#         which is itself stored in the self._fairness_heavinesses dictionary.
-#         This way, if one compute host happens to send a new collection of
-#         heavinesses while the other compute hosts are still computing the
-#         current heaviness, the new values can be stored in the queue
-#         for later use
-#
-#         :param heavinesses: Instance heavinesses
-#         :type heavinesses: dict
-#         """
-#         if isinstance(heavinesses, dict):
-#             compute_host = heavinesses['compute_host']
-#             del heavinesses['compute_host']
-#             if (compute_host in self._fairness_heavinesses.keys() and
-#                 isinstance(self._fairness_heavinesses[compute_host],
-#                            Queue.Queue)):
-#                 self._fairness_heavinesses[compute_host].put(heavinesses)
-#                 for key, value in heavinesses.iteritems():
-#                     if isinstance(value, dict):
-#                         LOG.debug("Instance "+key+" got heaviness: " +
-#                                   str(value['heaviness']))
-#             else:
-#                 self._fairness_heavinesses[compute_host] = Queue.Queue()
-#                 self._fairness_heavinesses[compute_host].put(heavinesses)
+            self.receive_heavinesses(ctxt, result)
+
+    def _add_heavinesses(self, heavinesses):
+        """ Add heavinesses received from a compute host
+
+        The heavinesses for all instances of a host are stored into a queue
+        which is itself stored in the self._fairness_heavinesses dictionary.
+        This way, if one compute host happens to send a new collection of
+        heavinesses while the other compute hosts are still computing the
+        current heaviness, the new values can be stored in the queue
+        for later use
+
+        :param heavinesses: Instance heavinesses
+        :type heavinesses: dict
+        """
+        print "add heavy metal"
+        if isinstance(heavinesses, dict):
+            compute_host = heavinesses['compute_host']
+            del heavinesses['compute_host']
+            if (compute_host in self._fairness_heavinesses.keys() and
+                isinstance(self._fairness_heavinesses[compute_host],
+                           Queue.Queue)):
+                self._fairness_heavinesses[compute_host].put(heavinesses)
+                for key, value in heavinesses.iteritems():
+                    if isinstance(value, dict):
+                        LOG.debug("Instance "+key+" got heaviness: " +
+                                  str(value['heaviness']))
+            else:
+                self._fairness_heavinesses[compute_host] = Queue.Queue()
+                self._fairness_heavinesses[compute_host].put(heavinesses)
 #
 #     def _all_heavinesses_collected(self):
 #         """ Check if all hosts have already reported their heavinesses
@@ -598,25 +599,25 @@ class FairnessManager(manager.Manager):
 #                 return True
 #         return False
 #
-#     def receive_heavinesses(self, ctxt, heavinesses):
-#         """ Receive heavinesses from host's RPC's
-#
-#         The heavinesses are added into Queues per host and then all queues are
-#         checked in order to start the computation of priorities for resource
-#         reallocation
-#
-#         :param ctxt: Request context
-#         :type ctxt: nova.context.RequestContext
-#         :param heavinesses: Instance heavinesses
-#         :type heavinesses: dict
-#         """
-#         formatted_time = ctxt.timestamp.strftime("%d.%m.%Y %H:%M:%S")
-#         LOG.debug("Received set of heavinesses created at " + formatted_time +
-#                   " on host " + ctxt.remote_address)
-#         self._add_heavinesses(heavinesses)
-#         if self._all_heavinesses_collected():
-#             self._timing_stats.stop_timing("heaviness")
-#             self._resource_allocation.reallocate()
+    def receive_heavinesses(self, ctxt, heavinesses):
+        """ Receive heavinesses from host's RPC's
+
+        The heavinesses are added into Queues per host and then all queues are
+        checked in order to start the computation of priorities for resource
+        reallocation
+
+        :param ctxt: Request context
+        :type ctxt: nova.context.RequestContext
+        :param heavinesses: Instance heavinesses
+        :type heavinesses: dict
+        """
+        formatted_time = ctxt.timestamp.strftime("%d.%m.%Y %H:%M:%S")
+        LOG.debug("Received set of heavinesses created at " + formatted_time +
+                  " on host " + ctxt.remote_address)
+        self._add_heavinesses(heavinesses)
+        # if self._all_heavinesses_collected():
+        #     self._timing_stats.stop_timing("heaviness")
+        #     self._resource_allocation.reallocate()
 #
 #     def _send_host_supply(self, host):
 #         """ Send the local host supply to a specific host

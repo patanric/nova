@@ -573,32 +573,33 @@ class FairnessManager(manager.Manager):
             else:
                 self._fairness_heavinesses[compute_host] = Queue.Queue()
                 self._fairness_heavinesses[compute_host].put(heavinesses)
-#
-#     def _all_heavinesses_collected(self):
-#         """ Check if all hosts have already reported their heavinesses
-#
-#         The heavinesses are stored in Queues that belong to the specific host,
-#         so the queues have to be checked whether the hosts they hold heavinesses
-#         for are still online. If all queues then hold at least 1 heavinesses
-#         dictionary, heavinesses of all hosts have been collected
-#
-#         :return: True if all heavinesses have been collected, False othwerwise
-#         :rtype: bool
-#         """
-#         # fairness_hosts = self.servicegroup_api.get_all("fairness")
-#         fairness_hosts = cloud_supply.get_all(self.servicegroup_api, "fairness")
-#         if not isinstance(fairness_hosts, nova.fairness.exception.ServiceGroupUnavailable):
-#             _local_heavinesses = dict.copy(self._fairness_heavinesses)
-#             for host in _local_heavinesses:
-#                 if host not in fairness_hosts:
-#                     del self._fairness_heavinesses[host]
-#             # If all heavinesses queues contain at least one item, the priority
-#             # computation can begin.
-#             if all(not value.empty()
-#                    for key, value in self._fairness_heavinesses.iteritems()):
-#                 return True
-#         return False
-#
+
+    def _all_heavinesses_collected(self):
+        """ Check if all hosts have already reported their heavinesses
+
+        The heavinesses are stored in Queues that belong to the specific host,
+        so the queues have to be checked whether the hosts they hold heavinesses
+        for are still online. If all queues then hold at least 1 heavinesses
+        dictionary, heavinesses of all hosts have been collected
+
+        :return: True if all heavinesses have been collected, False othwerwise
+        :rtype: bool
+        """
+        print "add heavy metal collected"
+        # fairness_hosts = self.servicegroup_api.get_all("fairness")
+        fairness_hosts = cloud_supply.get_all(self.servicegroup_api, "fairness")
+        if not isinstance(fairness_hosts, nova.fairness.exception.ServiceGroupUnavailable):
+            _local_heavinesses = dict.copy(self._fairness_heavinesses)
+            for host in _local_heavinesses:
+                if host not in fairness_hosts:
+                    del self._fairness_heavinesses[host]
+            # If all heavinesses queues contain at least one item, the priority
+            # computation can begin.
+            if all(not value.empty()
+                   for key, value in self._fairness_heavinesses.iteritems()):
+                return True
+        return False
+
     def receive_heavinesses(self, ctxt, heavinesses):
         """ Receive heavinesses from host's RPC's
 
@@ -615,9 +616,9 @@ class FairnessManager(manager.Manager):
         LOG.debug("Received set of heavinesses created at " + formatted_time +
                   " on host " + ctxt.remote_address)
         self._add_heavinesses(heavinesses)
-        # if self._all_heavinesses_collected():
-        #     self._timing_stats.stop_timing("heaviness")
-        #     self._resource_allocation.reallocate()
+        if self._all_heavinesses_collected():
+            self._timing_stats.stop_timing("heaviness")
+            self._resource_allocation.reallocate()
 #
 #     def _send_host_supply(self, host):
 #         """ Send the local host supply to a specific host

@@ -328,7 +328,8 @@ class FairnessManager(manager.Manager):
 #             result['status'] = "Metric not found on compute host."
 #         return result
 #
-    @periodic_task.periodic_task(spacing=CONF.fairness.supply_poll_interval)
+    # @periodic_task.periodic_task(spacing=CONF.fairness.supply_poll_interval)
+    @periodic_task.periodic_task(spacing=2)
     def _complete_cloud_supply(self, ctxt):
         """ Complete the cloud supply by polling all missing hosts
 
@@ -339,7 +340,7 @@ class FairnessManager(manager.Manager):
         :param ctxt: The periodic task context
         :type ctxt: nova.context.RequestContext
         """
-        print "Hello"
+        print "Hello2"
         self._cloud_supply.check_readiness()
         missing_hosts = self._cloud_supply.missing_hosts
         for host in missing_hosts:

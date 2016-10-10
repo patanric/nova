@@ -495,55 +495,55 @@ class FairnessManager(manager.Manager):
                 #    assert k > 0, "STOP!!!"
                 _cloud_supply *= self._cloud_supply.get_overcommitment()
                 self._timing_stats.start_timing("heaviness")
-            #     self._map_rui(
-            #             _cloud_supply,
-            #             _instance_endowments,
-            #             _instance_demands,
-            #             user_count)
-#
-#     def _map_rui(self, supply, instance_endowments,
-#                  instance_demands, user_count):
-#         """ The RUI that has been collected is mapped to a heaviness-scalar
-#
-#         The metric can be set in the nova.conf configuration file with the
-#         entry 'active_metric' in the group 'fairness'
-#
-#         :param supply: Supply of all hosts in the cloud
-#         :type supply: nova.fairness.metrics.BaseMetric.ResourceInformation
-#         :param instance_endowments: Endowment information per instance
-#         :type instance_endowments: dict
-#         :param instance_demands: Actual resource consumption of instances
-#         :type instance_demands: dict
-#         :param user_count: Number of users running instances in the cloud
-#         :type user_count: int
-#         """
-#         metric_class = importutils.import_class(self._active_metric)
-#         result = metric_class().map(supply,
-#                                     instance_demands,
-#                                     instance_endowments,
-#                                     user_count)
-#         assert isinstance(result['global_norm'], list),\
-#             "The metric should return the global_norm as a list"
-#         norm = result['global_norm']
-#         self._global_norm.__init__(norm[0],
-#                                    norm[1], norm[2],
-#                                    norm[3], norm[4], norm[5])
-#         del result['global_norm']
-#         # fairness_hosts = self.servicegroup_api.get_all("fairness")
-#         fairness_hosts = cloud_supply.get_all(self.servicegroup_api, "fairness")
-#         if not isinstance(fairness_hosts, nova.fairness.exception.ServiceGroupUnavailable):
-#             ctxt = context.RequestContext(None, None, remote_address=self.host)
-#             for host in fairness_hosts:
-#                 if host != self.host:
-#                     callcontext = self.client.prepare(topic='fairness',
-#                                                       version='1.0',
-#                                                       server=host)
-#                     callcontext.cast(ctxt,
-#                                      'receive_heavinesses',
-#                                      heavinesses=dict.copy(result))
-#             # Save own heavinesses without sending them through an RPC
-#             # to conserve bandwidth
-#             self.receive_heavinesses(ctxt, result)
+                self._map_rui(
+                        _cloud_supply,
+                        _instance_endowments,
+                        _instance_demands,
+                        user_count)
+
+    def _map_rui(self, supply, instance_endowments,
+                 instance_demands, user_count):
+        """ The RUI that has been collected is mapped to a heaviness-scalar
+
+        The metric can be set in the nova.conf configuration file with the
+        entry 'active_metric' in the group 'fairness'
+
+        :param supply: Supply of all hosts in the cloud
+        :type supply: nova.fairness.metrics.BaseMetric.ResourceInformation
+        :param instance_endowments: Endowment information per instance
+        :type instance_endowments: dict
+        :param instance_demands: Actual resource consumption of instances
+        :type instance_demands: dict
+        :param user_count: Number of users running instances in the cloud
+        :type user_count: int
+        """
+        metric_class = importutils.import_class(self._active_metric)
+        result = metric_class().map(supply,
+                                    instance_demands,
+                                    instance_endowments,
+                                    user_count)
+        assert isinstance(result['global_norm'], list),\
+            "The metric should return the global_norm as a list"
+        norm = result['global_norm']
+        self._global_norm.__init__(norm[0],
+                                   norm[1], norm[2],
+                                   norm[3], norm[4], norm[5])
+        del result['global_norm']
+        # fairness_hosts = self.servicegroup_api.get_all("fairness")
+        fairness_hosts = cloud_supply.get_all(self.servicegroup_api, "fairness")
+        if not isinstance(fairness_hosts, nova.fairness.exception.ServiceGroupUnavailable):
+            ctxt = context.RequestContext(None, None, remote_address=self.host)
+            for host in fairness_hosts:
+                if host != self.host:
+                    callcontext = self.client.prepare(topic='fairness',
+                                                      version='1.0',
+                                                      server=host)
+                    callcontext.cast(ctxt,
+                                     'receive_heavinesses',
+                                     heavinesses=dict.copy(result))
+            # Save own heavinesses without sending them through an RPC
+            # to conserve bandwidth
+            # self.receive_heavinesses(ctxt, result)
 #
 #     def _add_heavinesses(self, heavinesses):
 #         """ Add heavinesses received from a compute host

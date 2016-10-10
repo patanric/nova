@@ -618,7 +618,7 @@ class FairnessManager(manager.Manager):
         self._add_heavinesses(heavinesses)
         if self._all_heavinesses_collected():
             self._timing_stats.stop_timing("heaviness")
-            self._resource_allocation.reallocate()
+            # self._resource_allocation.reallocate()
 #
 #     def _send_host_supply(self, host):
 #         """ Send the local host supply to a specific host

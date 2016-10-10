@@ -80,7 +80,6 @@ fairness_manager_opts = [
                      'reallocation as well as network bandwidth reallocation.')
     ]
 print cfg.StrOpt.__dict__
-print cfg.IntOpt.__str__()
 
 # CONF = cfg.CONF
 # fairness_group = cfg.OptGroup("fairness", "Fairness configuration options")

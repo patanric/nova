@@ -79,14 +79,14 @@ fairness_manager_opts = [
                      'heaviness calculation & distribution, CPU, Memory and Disk'
                      'reallocation as well as network bandwidth reallocation.')
     ]
-print cfg.StrOpt.__dict__
 
-# CONF = cfg.CONF
-# fairness_group = cfg.OptGroup("fairness", "Fairness configuration options")
-# CONF.register_group(fairness_group)
-# CONF.register_opts(fairness_manager_opts, fairness_group)
-# LOG = logging.getLogger(__name__)
+CONF = cfg.CONF
+fairness_group = cfg.OptGroup("fairness", "Fairness configuration options")
+CONF.register_group(fairness_group)
+CONF.register_opts(fairness_manager_opts, fairness_group)
+LOG = logging.getLogger(__name__)
 
+print CONF.__dict__
 
 class FairnessManager(manager.Manager):
     print "hello"

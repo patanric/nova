@@ -483,18 +483,18 @@ class FairnessManager(manager.Manager):
                         self._rui_collection_helper.add_instance_endowment(
                             endowment_resource)
 
-            # _instance_endowments =\
-            #     self._rui_collection_helper.get_instance_endowments(instances)
-            # _instance_demands =\
-            #     self._rui_collection_helper.get_instance_demands(instances)
-            # if len(_instance_endowments) > 0 and len(_instance_demands) > 0 \
-            #         and self._rui_collection_helper.interval() is not None:
-            #     # Add the overcommitment to the cloud supply to consider
-            #     # it for the global norm
-            #     #for k in self._cloud_supply.get_overcommitment():
-            #     #    assert k > 0, "STOP!!!"
-            #     _cloud_supply *= self._cloud_supply.get_overcommitment()
-            #     self._timing_stats.start_timing("heaviness")
+            _instance_endowments =\
+                self._rui_collection_helper.get_instance_endowments(instances)
+            _instance_demands =\
+                self._rui_collection_helper.get_instance_demands(instances)
+            if len(_instance_endowments) > 0 and len(_instance_demands) > 0 \
+                    and self._rui_collection_helper.interval() is not None:
+                # Add the overcommitment to the cloud supply to consider
+                # it for the global norm
+                #for k in self._cloud_supply.get_overcommitment():
+                #    assert k > 0, "STOP!!!"
+                _cloud_supply *= self._cloud_supply.get_overcommitment()
+                self._timing_stats.start_timing("heaviness")
             #     self._map_rui(
             #             _cloud_supply,
             #             _instance_endowments,

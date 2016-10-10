@@ -394,92 +394,94 @@ class FairnessManager(manager.Manager):
                 if domain.isActive():
                     active_instances += 1
             self._timing_stats.stop_timing("rui_setup")
-            # if active_instances > 0:
-            #     for instance in instances:
-            #         self._timing_stats.start_timing("rui", instance['name'])
-            #         # domain = self.driver._lookup_by_name(instance['name'])
-            #         domain = _lookup_by_name(self.driver, instance['name'])
-            #         if not domain.isActive():
-            #             self._rui_collection_helper.remove_inactive_instance(
-            #                 instance['name'])
-            #         else:
-            #             # Get CPU times
-            #             total_cpu_time = 0
-            #             try:
-            #                 cputime = domain.vcpus()[0]
-            #                 for i in range(len(cputime)):
-            #                     total_cpu_time += cputime[i][2]
-            #             except libvirt.libvirtError:
-            #                 pass
-            #             total_cpu_time /= 1000000000
-            #             total_cpu_time *= self._cloud_supply.local_bogo_mips
-            #             # Get disks transferred bytes
-            #             total_disks_bytes_read = 0
-            #             total_disks_bytes_written = 0
-            #             xml = domain.XMLDesc(0)
-            #             dom_io = self.driver._get_io_devices(xml)
-            #             for guest_disk in dom_io["volumes"]:
-            #                 try:
-            #                     stats = domain.blockStats(guest_disk)
-            #                     total_disks_bytes_read += stats[1]
-            #                     total_disks_bytes_written += stats[3]
-            #                 except libvirt.libvirtError:
-            #                     pass
-            #             # Get network transferred bytes
-            #             total_network_rx_bytes = 0
-            #             total_network_tx_bytes = 0
-            #             for interface in dom_io["ifaces"]:
-            #                 try:
-            #                     stats = domain.interfaceStats(interface)
-            #                     total_network_rx_bytes += stats[0]
-            #                     total_network_tx_bytes += stats[4]
-            #                 except libvirt.libvirtError:
-            #                     pass
-            #             # The memory reported by libvirt is
-            #             # measured in kilobytes
-            #             flavor_memory_total = domain.maxMemory()
-            #             total_memory_used = flavor_memory_total
-            #             try:
-            #                 mem = domain.memoryStats()
-            #                 if 'unused' in mem.keys():
-            #                     total_memory_used = (flavor_memory_total -
-            #                                          int(mem['unused']))
-            #                 elif 'rss' in mem.keys():
-            #                     total_memory_used = int(mem['rss'])
-            #                 if total_memory_used > flavor_memory_total:
-            #                     total_memory_used = flavor_memory_total
-            #             except (libvirt.libvirtError, AttributeError):
-            #                 pass
-            #
-            #             # Prepare instance demands
-            #             demand_resource = metrics.BaseMetric.\
-            #                 ResourceInformation(
-            #                     compute_host=instance['host'],
-            #                     user_id=instance['user_id'],
-            #                     instance_name=instance['name'],
-            #                     cpu_time=total_cpu_time,
-            #                     disk_bytes_read=total_disks_bytes_read,
-            #                     disk_bytes_written=total_disks_bytes_written,
-            #                     network_bytes_received=total_network_rx_bytes,
-            #                     network_bytes_transmitted=
-            #                     total_network_tx_bytes,
-            #                     memory_used=total_memory_used)
-            #
-            #             self._rui_collection_helper.add_instance_demand(
-            #                     demand_resource)
-            #
-            #             # Prepare instance endowments
-            #             flavor_cpu_time = (
-            #                 (_local_supply.cpu_time / total_vcpus) *
-            #                 instance['vcpus'])
-            #             endowment_resource = _local_supply / active_instances
-            #             endowment_resource.user_id = instance['user_id']
-            #             endowment_resource.instance_name = instance['name']
-            #             endowment_resource.cpu_time = flavor_cpu_time
-            #             endowment_resource.memory_used = flavor_memory_total
-            #             self._timing_stats.stop_timing("rui", instance['name'])
-            #             self._rui_collection_helper.add_instance_endowment(
-            #                 endowment_resource)
+            if active_instances > 0:
+                print "inside big IF"
+
+                for instance in instances:
+                    self._timing_stats.start_timing("rui", instance['name'])
+                    # domain = self.driver._lookup_by_name(instance['name'])
+                    domain = _lookup_by_name(self.driver, instance['name'])
+                    if not domain.isActive():
+                        self._rui_collection_helper.remove_inactive_instance(
+                            instance['name'])
+                    else:
+                        # Get CPU times
+                        total_cpu_time = 0
+                        try:
+                            cputime = domain.vcpus()[0]
+                            for i in range(len(cputime)):
+                                total_cpu_time += cputime[i][2]
+                        except libvirt.libvirtError:
+                            pass
+                        total_cpu_time /= 1000000000
+                        total_cpu_time *= self._cloud_supply.local_bogo_mips
+                        # Get disks transferred bytes
+                        total_disks_bytes_read = 0
+                        total_disks_bytes_written = 0
+                        xml = domain.XMLDesc(0)
+                        dom_io = self.driver._get_io_devices(xml)
+                        for guest_disk in dom_io["volumes"]:
+                            try:
+                                stats = domain.blockStats(guest_disk)
+                                total_disks_bytes_read += stats[1]
+                                total_disks_bytes_written += stats[3]
+                            except libvirt.libvirtError:
+                                pass
+                        # Get network transferred bytes
+                        total_network_rx_bytes = 0
+                        total_network_tx_bytes = 0
+                        for interface in dom_io["ifaces"]:
+                            try:
+                                stats = domain.interfaceStats(interface)
+                                total_network_rx_bytes += stats[0]
+                                total_network_tx_bytes += stats[4]
+                            except libvirt.libvirtError:
+                                pass
+                        # The memory reported by libvirt is
+                        # measured in kilobytes
+                        flavor_memory_total = domain.maxMemory()
+                        total_memory_used = flavor_memory_total
+                        try:
+                            mem = domain.memoryStats()
+                            if 'unused' in mem.keys():
+                                total_memory_used = (flavor_memory_total -
+                                                     int(mem['unused']))
+                            elif 'rss' in mem.keys():
+                                total_memory_used = int(mem['rss'])
+                            if total_memory_used > flavor_memory_total:
+                                total_memory_used = flavor_memory_total
+                        except (libvirt.libvirtError, AttributeError):
+                            pass
+
+                        # Prepare instance demands
+                        demand_resource = metrics.BaseMetric.\
+                            ResourceInformation(
+                                compute_host=instance['host'],
+                                user_id=instance['user_id'],
+                                instance_name=instance['name'],
+                                cpu_time=total_cpu_time,
+                                disk_bytes_read=total_disks_bytes_read,
+                                disk_bytes_written=total_disks_bytes_written,
+                                network_bytes_received=total_network_rx_bytes,
+                                network_bytes_transmitted=
+                                total_network_tx_bytes,
+                                memory_used=total_memory_used)
+
+                        self._rui_collection_helper.add_instance_demand(
+                                demand_resource)
+
+                        # Prepare instance endowments
+                        flavor_cpu_time = (
+                            (_local_supply.cpu_time / total_vcpus) *
+                            instance['vcpus'])
+                        endowment_resource = _local_supply / active_instances
+                        endowment_resource.user_id = instance['user_id']
+                        endowment_resource.instance_name = instance['name']
+                        endowment_resource.cpu_time = flavor_cpu_time
+                        endowment_resource.memory_used = flavor_memory_total
+                        self._timing_stats.stop_timing("rui", instance['name'])
+                        self._rui_collection_helper.add_instance_endowment(
+                            endowment_resource)
 
             # _instance_endowments =\
             #     self._rui_collection_helper.get_instance_endowments(instances)

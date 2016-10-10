@@ -42,43 +42,46 @@ from nova.objects import instance as instance_objects
 from nova.virt import driver
 from nova.virt import virtapi
 
-# fairness_manager_opts = [
-#     cfg.StrOpt('active_metric',
-#                default='nova.fairness.metrics.greediness.GreedinessMetric',
-#                help='Fairness metric used to compute heavinesses.'),
-#     cfg.MultiStrOpt('available_metrics',
-#                     default=['nova.fairness.metrics.all_metrics'],
-#                     help='All available fairness metrics classes '
-#                     'that can be used.'),
-#     cfg.IntOpt('rui_collection_interval',
-#                default=10,
-#                help='Interval to collect RUI of all instances running '
-#                     'on the host. The interval is in seconds. Set to -1 '
-#                     'to disable. Setting this to 0 in Juno runs it at '
-#                     'the periodic task default rate.'),
-#     cfg.IntOpt('supply_poll_interval',
-#                default=10,
-#                help='Interval to check if all host supplies of all'
-#                     'compute hosts in the cloud have already been collected'
-#                     'and to poll hosts whose supplies are still missing.'),
-#     cfg.FloatOpt('resource_decay_factor',
-#                  default=0.5,
-#                  help='The decay factor is used to lessen the impact of old'
-#                       'RUI measurements on the newest measurement.'),
-#     cfg.BoolOpt('rui_stats_enabled',
-#                 default=False,
-#                 help='Set rui_stats_enabled to True in order to produce a'
-#                      'csv file containing resource reallocation as well'
-#                      'as resource utilization information about all'
-#                      'instances running on the host.'),
-#     cfg.BoolOpt('timing_stats_enabled',
-#                 default=False,
-#                 help='Set timing_stats_enabled to True in order to produce a'
-#                      'csv file containing timing information about the runtime'
-#                      'of the extension broken down into time for RUI collection,'
-#                      'heaviness calculation & distribution, CPU, Memory and Disk'
-#                      'reallocation as well as network bandwidth reallocation.')
-#     ]
+fairness_manager_opts = [
+    cfg.StrOpt('active_metric',
+               default='nova.fairness.metrics.greediness.GreedinessMetric',
+               help='Fairness metric used to compute heavinesses.'),
+    cfg.MultiStrOpt('available_metrics',
+                    default=['nova.fairness.metrics.all_metrics'],
+                    help='All available fairness metrics classes '
+                    'that can be used.'),
+    cfg.IntOpt('rui_collection_interval',
+               default=10,
+               help='Interval to collect RUI of all instances running '
+                    'on the host. The interval is in seconds. Set to -1 '
+                    'to disable. Setting this to 0 in Juno runs it at '
+                    'the periodic task default rate.'),
+    cfg.IntOpt('supply_poll_interval',
+               default=10,
+               help='Interval to check if all host supplies of all'
+                    'compute hosts in the cloud have already been collected'
+                    'and to poll hosts whose supplies are still missing.'),
+    cfg.FloatOpt('resource_decay_factor',
+                 default=0.5,
+                 help='The decay factor is used to lessen the impact of old'
+                      'RUI measurements on the newest measurement.'),
+    cfg.BoolOpt('rui_stats_enabled',
+                default=False,
+                help='Set rui_stats_enabled to True in order to produce a'
+                     'csv file containing resource reallocation as well'
+                     'as resource utilization information about all'
+                     'instances running on the host.'),
+    cfg.BoolOpt('timing_stats_enabled',
+                default=False,
+                help='Set timing_stats_enabled to True in order to produce a'
+                     'csv file containing timing information about the runtime'
+                     'of the extension broken down into time for RUI collection,'
+                     'heaviness calculation & distribution, CPU, Memory and Disk'
+                     'reallocation as well as network bandwidth reallocation.')
+    ]
+print cfg.StrOpt
+print cfg.MultiStrOpt
+print cfg.IntOpt
 
 # CONF = cfg.CONF
 # fairness_group = cfg.OptGroup("fairness", "Fairness configuration options")

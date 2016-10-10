@@ -79,9 +79,9 @@ fairness_manager_opts = [
                      'heaviness calculation & distribution, CPU, Memory and Disk'
                      'reallocation as well as network bandwidth reallocation.')
     ]
-print cfg.StrOpt
-print cfg.MultiStrOpt
-print cfg.IntOpt
+print cfg.StrOpt.__dict__
+print cfg.MultiStrOpt.default
+print cfg.IntOpt.__str__()
 
 # CONF = cfg.CONF
 # fairness_group = cfg.OptGroup("fairness", "Fairness configuration options")

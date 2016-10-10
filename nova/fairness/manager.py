@@ -340,7 +340,6 @@ class FairnessManager(manager.Manager):
         :param ctxt: The periodic task context
         :type ctxt: nova.context.RequestContext
         """
-        print "Hello2"
         self._cloud_supply.check_readiness()
         missing_hosts = self._cloud_supply.missing_hosts
         for host in missing_hosts:
@@ -354,150 +353,151 @@ class FairnessManager(manager.Manager):
                              'receive_host_supply',
                              json_supply=local_host_supply.to_json())
 
-#     @periodic_task.periodic_task(spacing=CONF.fairness.rui_collection_interval)
-#     def _collect_rui(self, ctxt):
-#         """ Collect RUI of all instances running on the compute host
-#
-#         :param ctxt: The periodic task context
-#         :type ctxt: nova.context.RequestContext
-#         """
-#         if self._cloud_supply.ready:
-#             self._timing_stats.start_timing("rui_setup")
-#             self._rui_collection_helper.start()
-#             instances = instance_objects.InstanceList().get_by_host(ctxt,
-#                                                                     self.host)
-#             if self._rui_collection_helper.interval() is None:
-#                 host_uptime = timeutils.delta_seconds(
-#                     self._cloud_supply.local_boot_time,
-#                     self._rui_collection_helper.last_collection_time())
-#                 _cloud_supply = self._cloud_supply.get_cloud_supply(host_uptime)
-#                 _local_supply = self._cloud_supply.get_host_supply(host_uptime)
-#             else:
-#                 _cloud_supply = self._cloud_supply.get_cloud_supply(
-#                     self._rui_collection_helper.interval())
-#                 _local_supply = self._cloud_supply.get_host_supply(
-#                     self._rui_collection_helper.interval())
-#             user_count = self._resource_allocation.user_count
-#             if user_count is None:
-#                 user_count = self._cloud_supply.user_count
-#             if user_count <= 0:
-#                 user_count = 1
-#             self._fairness_quota.__dict__.update(
-#                     (_cloud_supply / user_count).__dict__)
-#
-#             active_instances = 0
-#             total_vcpus = 0
-#             for instance in instances:
-#                 total_vcpus += instance.vcpus
-#                 # domain = self.driver._lookup_by_name(instance['name'])
-#                 domain = _lookup_by_name(self.driver, instance['name'])
-#                 if domain.isActive():
-#                     active_instances += 1
-#             self._timing_stats.stop_timing("rui_setup")
-#             if active_instances > 0:
-#                 for instance in instances:
-#                     self._timing_stats.start_timing("rui", instance['name'])
-#                     # domain = self.driver._lookup_by_name(instance['name'])
-#                     domain = _lookup_by_name(self.driver, instance['name'])
-#                     if not domain.isActive():
-#                         self._rui_collection_helper.remove_inactive_instance(
-#                             instance['name'])
-#                     else:
-#                         # Get CPU times
-#                         total_cpu_time = 0
-#                         try:
-#                             cputime = domain.vcpus()[0]
-#                             for i in range(len(cputime)):
-#                                 total_cpu_time += cputime[i][2]
-#                         except libvirt.libvirtError:
-#                             pass
-#                         total_cpu_time /= 1000000000
-#                         total_cpu_time *= self._cloud_supply.local_bogo_mips
-#                         # Get disks transferred bytes
-#                         total_disks_bytes_read = 0
-#                         total_disks_bytes_written = 0
-#                         xml = domain.XMLDesc(0)
-#                         dom_io = self.driver._get_io_devices(xml)
-#                         for guest_disk in dom_io["volumes"]:
-#                             try:
-#                                 stats = domain.blockStats(guest_disk)
-#                                 total_disks_bytes_read += stats[1]
-#                                 total_disks_bytes_written += stats[3]
-#                             except libvirt.libvirtError:
-#                                 pass
-#                         # Get network transferred bytes
-#                         total_network_rx_bytes = 0
-#                         total_network_tx_bytes = 0
-#                         for interface in dom_io["ifaces"]:
-#                             try:
-#                                 stats = domain.interfaceStats(interface)
-#                                 total_network_rx_bytes += stats[0]
-#                                 total_network_tx_bytes += stats[4]
-#                             except libvirt.libvirtError:
-#                                 pass
-#                         # The memory reported by libvirt is
-#                         # measured in kilobytes
-#                         flavor_memory_total = domain.maxMemory()
-#                         total_memory_used = flavor_memory_total
-#                         try:
-#                             mem = domain.memoryStats()
-#                             if 'unused' in mem.keys():
-#                                 total_memory_used = (flavor_memory_total -
-#                                                      int(mem['unused']))
-#                             elif 'rss' in mem.keys():
-#                                 total_memory_used = int(mem['rss'])
-#                             if total_memory_used > flavor_memory_total:
-#                                 total_memory_used = flavor_memory_total
-#                         except (libvirt.libvirtError, AttributeError):
-#                             pass
-#
-#                         # Prepare instance demands
-#                         demand_resource = metrics.BaseMetric.\
-#                             ResourceInformation(
-#                                 compute_host=instance['host'],
-#                                 user_id=instance['user_id'],
-#                                 instance_name=instance['name'],
-#                                 cpu_time=total_cpu_time,
-#                                 disk_bytes_read=total_disks_bytes_read,
-#                                 disk_bytes_written=total_disks_bytes_written,
-#                                 network_bytes_received=total_network_rx_bytes,
-#                                 network_bytes_transmitted=
-#                                 total_network_tx_bytes,
-#                                 memory_used=total_memory_used)
-#
-#                         self._rui_collection_helper.add_instance_demand(
-#                                 demand_resource)
-#
-#                         # Prepare instance endowments
-#                         flavor_cpu_time = (
-#                             (_local_supply.cpu_time / total_vcpus) *
-#                             instance['vcpus'])
-#                         endowment_resource = _local_supply / active_instances
-#                         endowment_resource.user_id = instance['user_id']
-#                         endowment_resource.instance_name = instance['name']
-#                         endowment_resource.cpu_time = flavor_cpu_time
-#                         endowment_resource.memory_used = flavor_memory_total
-#                         self._timing_stats.stop_timing("rui", instance['name'])
-#                         self._rui_collection_helper.add_instance_endowment(
-#                             endowment_resource)
-#
-#             _instance_endowments =\
-#                 self._rui_collection_helper.get_instance_endowments(instances)
-#             _instance_demands =\
-#                 self._rui_collection_helper.get_instance_demands(instances)
-#             if len(_instance_endowments) > 0 and len(_instance_demands) > 0 \
-#                     and self._rui_collection_helper.interval() is not None:
-#                 # Add the overcommitment to the cloud supply to consider
-#                 # it for the global norm
-#                 #for k in self._cloud_supply.get_overcommitment():
-#                 #    assert k > 0, "STOP!!!"
-#                 _cloud_supply *= self._cloud_supply.get_overcommitment()
-#                 self._timing_stats.start_timing("heaviness")
-#                 self._map_rui(
-#                         _cloud_supply,
-#                         _instance_endowments,
-#                         _instance_demands,
-#                         user_count)
+    @periodic_task.periodic_task(spacing=CONF.fairness.rui_collection_interval)
+    def _collect_rui(self, ctxt):
+        """ Collect RUI of all instances running on the compute host
+
+        :param ctxt: The periodic task context
+        :type ctxt: nova.context.RequestContext
+        """
+        print "inside collect"
+        if self._cloud_supply.ready:
+            self._timing_stats.start_timing("rui_setup")
+            self._rui_collection_helper.start()
+            instances = instance_objects.InstanceList().get_by_host(ctxt,
+                                                                    self.host)
+            if self._rui_collection_helper.interval() is None:
+                host_uptime = timeutils.delta_seconds(
+                    self._cloud_supply.local_boot_time,
+                    self._rui_collection_helper.last_collection_time())
+                _cloud_supply = self._cloud_supply.get_cloud_supply(host_uptime)
+                _local_supply = self._cloud_supply.get_host_supply(host_uptime)
+            else:
+                _cloud_supply = self._cloud_supply.get_cloud_supply(
+                    self._rui_collection_helper.interval())
+                _local_supply = self._cloud_supply.get_host_supply(
+                    self._rui_collection_helper.interval())
+            user_count = self._resource_allocation.user_count
+            if user_count is None:
+                user_count = self._cloud_supply.user_count
+            if user_count <= 0:
+                user_count = 1
+            self._fairness_quota.__dict__.update(
+                    (_cloud_supply / user_count).__dict__)
+
+            active_instances = 0
+            total_vcpus = 0
+            for instance in instances:
+                total_vcpus += instance.vcpus
+                # domain = self.driver._lookup_by_name(instance['name'])
+                domain = _lookup_by_name(self.driver, instance['name'])
+                if domain.isActive():
+                    active_instances += 1
+            self._timing_stats.stop_timing("rui_setup")
+            # if active_instances > 0:
+            #     for instance in instances:
+            #         self._timing_stats.start_timing("rui", instance['name'])
+            #         # domain = self.driver._lookup_by_name(instance['name'])
+            #         domain = _lookup_by_name(self.driver, instance['name'])
+            #         if not domain.isActive():
+            #             self._rui_collection_helper.remove_inactive_instance(
+            #                 instance['name'])
+            #         else:
+            #             # Get CPU times
+            #             total_cpu_time = 0
+            #             try:
+            #                 cputime = domain.vcpus()[0]
+            #                 for i in range(len(cputime)):
+            #                     total_cpu_time += cputime[i][2]
+            #             except libvirt.libvirtError:
+            #                 pass
+            #             total_cpu_time /= 1000000000
+            #             total_cpu_time *= self._cloud_supply.local_bogo_mips
+            #             # Get disks transferred bytes
+            #             total_disks_bytes_read = 0
+            #             total_disks_bytes_written = 0
+            #             xml = domain.XMLDesc(0)
+            #             dom_io = self.driver._get_io_devices(xml)
+            #             for guest_disk in dom_io["volumes"]:
+            #                 try:
+            #                     stats = domain.blockStats(guest_disk)
+            #                     total_disks_bytes_read += stats[1]
+            #                     total_disks_bytes_written += stats[3]
+            #                 except libvirt.libvirtError:
+            #                     pass
+            #             # Get network transferred bytes
+            #             total_network_rx_bytes = 0
+            #             total_network_tx_bytes = 0
+            #             for interface in dom_io["ifaces"]:
+            #                 try:
+            #                     stats = domain.interfaceStats(interface)
+            #                     total_network_rx_bytes += stats[0]
+            #                     total_network_tx_bytes += stats[4]
+            #                 except libvirt.libvirtError:
+            #                     pass
+            #             # The memory reported by libvirt is
+            #             # measured in kilobytes
+            #             flavor_memory_total = domain.maxMemory()
+            #             total_memory_used = flavor_memory_total
+            #             try:
+            #                 mem = domain.memoryStats()
+            #                 if 'unused' in mem.keys():
+            #                     total_memory_used = (flavor_memory_total -
+            #                                          int(mem['unused']))
+            #                 elif 'rss' in mem.keys():
+            #                     total_memory_used = int(mem['rss'])
+            #                 if total_memory_used > flavor_memory_total:
+            #                     total_memory_used = flavor_memory_total
+            #             except (libvirt.libvirtError, AttributeError):
+            #                 pass
+            #
+            #             # Prepare instance demands
+            #             demand_resource = metrics.BaseMetric.\
+            #                 ResourceInformation(
+            #                     compute_host=instance['host'],
+            #                     user_id=instance['user_id'],
+            #                     instance_name=instance['name'],
+            #                     cpu_time=total_cpu_time,
+            #                     disk_bytes_read=total_disks_bytes_read,
+            #                     disk_bytes_written=total_disks_bytes_written,
+            #                     network_bytes_received=total_network_rx_bytes,
+            #                     network_bytes_transmitted=
+            #                     total_network_tx_bytes,
+            #                     memory_used=total_memory_used)
+            #
+            #             self._rui_collection_helper.add_instance_demand(
+            #                     demand_resource)
+            #
+            #             # Prepare instance endowments
+            #             flavor_cpu_time = (
+            #                 (_local_supply.cpu_time / total_vcpus) *
+            #                 instance['vcpus'])
+            #             endowment_resource = _local_supply / active_instances
+            #             endowment_resource.user_id = instance['user_id']
+            #             endowment_resource.instance_name = instance['name']
+            #             endowment_resource.cpu_time = flavor_cpu_time
+            #             endowment_resource.memory_used = flavor_memory_total
+            #             self._timing_stats.stop_timing("rui", instance['name'])
+            #             self._rui_collection_helper.add_instance_endowment(
+            #                 endowment_resource)
+
+            # _instance_endowments =\
+            #     self._rui_collection_helper.get_instance_endowments(instances)
+            # _instance_demands =\
+            #     self._rui_collection_helper.get_instance_demands(instances)
+            # if len(_instance_endowments) > 0 and len(_instance_demands) > 0 \
+            #         and self._rui_collection_helper.interval() is not None:
+            #     # Add the overcommitment to the cloud supply to consider
+            #     # it for the global norm
+            #     #for k in self._cloud_supply.get_overcommitment():
+            #     #    assert k > 0, "STOP!!!"
+            #     _cloud_supply *= self._cloud_supply.get_overcommitment()
+            #     self._timing_stats.start_timing("heaviness")
+            #     self._map_rui(
+            #             _cloud_supply,
+            #             _instance_endowments,
+            #             _instance_demands,
+            #             user_count)
 #
 #     def _map_rui(self, supply, instance_endowments,
 #                  instance_demands, user_count):

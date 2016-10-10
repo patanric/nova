@@ -86,8 +86,6 @@ CONF.register_group(fairness_group)
 CONF.register_opts(fairness_manager_opts, fairness_group)
 LOG = logging.getLogger(__name__)
 
-print CONF.__dict__
-
 class FairnessManager(manager.Manager):
     print "hello"
 #     """Manager to enforce cloud-wide, multi-resource fairness
@@ -95,157 +93,157 @@ class FairnessManager(manager.Manager):
 #     The manager collects RUI and host supply information
 #     """
 #
-#     # class RUICollectionHelper(object):
-#     #
-#     #     def __init__(self, rui_statistics):
-#     #         self._last_collection_time = None
-#     #         self._time_since_last_collection = None
-#     #         self._full_demands = dict()
-#     #         self._interval_demands = dict()
-#     #         self._endowments = dict()
-#     #         self._rui_stats = rui_statistics
-#     #
-#     #     def start(self):
-#     #         """ Indicate the point in time when the RUI collection started
-#     #
-#     #         The time is needed to calculate the interval between RUI collections
-#     #         """
-#     #         time_now = timeutils.utcnow()
-#     #         if self._last_collection_time is not None:
-#     #             self._time_since_last_collection = timeutils.delta_seconds(
-#     #                 self._last_collection_time, time_now)
-#     #         self._last_collection_time = time_now
-#     #
-#     #     def remove_inactive_instance(self, instance_name):
-#     #         """ Remove instances which are paused
-#     #
-#     #         If the instance_name does not exist in _full_demands,
-#     #         _interval_demands or _endowments, pop does not produce
-#     #         a KeyError
-#     #
-#     #         :param instance_name: The name of the instance
-#     #         :type instance_name: str
-#     #         """
-#     #         self._full_demands.pop(instance_name, 0)
-#     #         self._interval_demands.pop(instance_name, 0)
-#     #         self._endowments.pop(instance_name, 0)
-#     #
-#     #     def last_collection_time(self):
-#     #         return self._last_collection_time
-#     #
-#     #     def interval(self):
-#     #         return self._time_since_last_collection
-#     #
-#     #     def add_instance_demand(self, demand):
-#     #         """ Add collected usage information for an instance
-#     #
-#     #         On the initial run of the RUI collection method, utilization
-#     #         information for the instance since creation is gathered as
-#     #         the basis for future interval-based utilization information.
-#     #         For each interval, the difference between the current utilization
-#     #         information and the last recorded information is computed to create
-#     #         the interval-related demands
-#     #
-#     #         :param demand: Instance usage information since creation
-#     #         :type demand: nova.fairness.metrics.BaseMetric.ResourceInformation
-#     #         """
-#     #         # If instance demands have already been collected, update the
-#     #         # collected demands by decaying them and adding the new demands
-#     #         if (demand.instance_name in self._interval_demands and
-#     #                 demand.instance_name in self._full_demands):
-#     #             last_full_demand = self._full_demands[demand.instance_name]
-#     #             new = metrics.BaseMetric.ResourceInformation(
-#     #                 cpu_time=demand.cpu_time - last_full_demand.cpu_time,
-#     #                 disk_bytes_read=demand.disk_bytes_read -
-#     #                 last_full_demand.disk_bytes_read,
-#     #                 disk_bytes_written=demand.disk_bytes_written -
-#     #                 last_full_demand.disk_bytes_written,
-#     #                 network_bytes_received=demand.network_bytes_received -
-#     #                 last_full_demand.network_bytes_received,
-#     #                 network_bytes_transmitted=demand.network_bytes_transmitted -
-#     #                 last_full_demand.network_bytes_transmitted,
-#     #                 memory_used=demand.memory_used,
-#     #                 compute_host=demand.compute_host,
-#     #                 user_id=demand.user_id,
-#     #                 instance_name=demand.instance_name
-#     #             )
-#     #             if self._interval_demands[demand.instance_name] is None:
-#     #                 self._interval_demands[demand.instance_name] = new
-#     #             else:
-#     #                 old = self._interval_demands[demand.instance_name]
-#     #                 assert isinstance(old,
-#     #                                   metrics.BaseMetric.ResourceInformation),\
-#     #                     "Old demand has to be a ResourceInformation object"
-#     #                 decay_factor = float(CONF.fairness.resource_decay_factor)
-#     #                 self._interval_demands[demand.instance_name] = \
-#     #                     (old * (1 - decay_factor)) + (new * decay_factor)
-#     #             self._full_demands[demand.instance_name] = demand
-#     #             if CONF.fairness.rui_stats_enabled:
-#     #                 self._rui_stats.add_rui(new,
-#     #                                         self._time_since_last_collection)
-#     #         else:
-#     #             # If the demands have not yet been stored earlier, this can
-#     #             # be because it's the first run of the RUI collection task
-#     #             # or the instance has been started after the service
-#     #             if self._time_since_last_collection is None:
-#     #                 self._interval_demands[demand.instance_name] = None
-#     #             else:
-#     #                 self._interval_demands[demand.instance_name] = demand
-#     #             self._full_demands[demand.instance_name] = demand
-#     #
-#     #     def add_instance_endowment(self, endowment):
-#     #         """ Add endowment information for an instance
-#     #
-#     #         :param endowment: Endowment for and instance
-#     #         :type endowment:
-#     #         nova.fairness.metrics.BaseMetric.ResourceInformation
-#     #         """
-#     #         self._endowments[endowment.instance_name] = endowment
-#     #
-#     #     def get_instance_demands(self, instances):
-#     #         """ Return instance demands for all active instances
-#     #
-#     #         Demand information stored in self._full_demands and
-#     #         self._interval_demands could still contain suspended/stopped or
-#     #         terminated instances so they are first removed based on the list
-#     #         of instances gathered by the RUI collection task
-#     #
-#     #         :param instances: List of instances queried through nova conductor
-#     #         :type instances: nova.objects.instance.InstanceList
-#     #         :return: Demands of all active instances
-#     #         :rtype: dict
-#     #         """
-#     #         running_instances = set([instance.name for instance in instances])
-#     #         demand_instances = set(self._full_demands.keys())
-#     #         terminated_instances = demand_instances - running_instances
-#     #         for instance_name in terminated_instances:
-#     #             self._full_demands.pop(instance_name, 0)
-#     #             self._interval_demands.pop(instance_name, 0)
-#     #         # After the first RUI collection run, interval demands are still
-#     #         # None, so only full demands should be returned
-#     #         if not all(self._interval_demands.values()):
-#     #             return self._full_demands
-#     #         return self._interval_demands
-#     #
-#     #     def get_instance_endowments(self, instances):
-#     #         """ Return instance endowments for all active instances
-#     #
-#     #         Endowment information stored in self._endowments could still
-#     #         contain suspended/stopped or terminated instances so they are
-#     #         first removed based on the list of instances gathered by
-#     #         the RUI collection task
-#     #
-#     #         :param instances: List of instances queried through nova conductor
-#     #         :type instances: nova.objects.instance.InstanceList
-#     #         :return: Endowmnets of all active instances
-#     #         :rtype: dict
-#     #         """
-#     #         running_instances = set([instance.name for instance in instances])
-#     #         endowment_instances = set(self._endowments.keys())
-#     #         terminated_instances = endowment_instances - running_instances
-#     #         for instance_name in terminated_instances:
-#     #             del self._endowments[instance_name]
-#     #         return self._endowments
+    class RUICollectionHelper(object):
+
+        def __init__(self, rui_statistics):
+            self._last_collection_time = None
+            self._time_since_last_collection = None
+            self._full_demands = dict()
+            self._interval_demands = dict()
+            self._endowments = dict()
+            self._rui_stats = rui_statistics
+
+        def start(self):
+            """ Indicate the point in time when the RUI collection started
+
+            The time is needed to calculate the interval between RUI collections
+            """
+            time_now = timeutils.utcnow()
+            if self._last_collection_time is not None:
+                self._time_since_last_collection = timeutils.delta_seconds(
+                    self._last_collection_time, time_now)
+            self._last_collection_time = time_now
+
+        def remove_inactive_instance(self, instance_name):
+            """ Remove instances which are paused
+
+            If the instance_name does not exist in _full_demands,
+            _interval_demands or _endowments, pop does not produce
+            a KeyError
+
+            :param instance_name: The name of the instance
+            :type instance_name: str
+            """
+            self._full_demands.pop(instance_name, 0)
+            self._interval_demands.pop(instance_name, 0)
+            self._endowments.pop(instance_name, 0)
+
+        def last_collection_time(self):
+            return self._last_collection_time
+
+        def interval(self):
+            return self._time_since_last_collection
+
+        def add_instance_demand(self, demand):
+            """ Add collected usage information for an instance
+
+            On the initial run of the RUI collection method, utilization
+            information for the instance since creation is gathered as
+            the basis for future interval-based utilization information.
+            For each interval, the difference between the current utilization
+            information and the last recorded information is computed to create
+            the interval-related demands
+
+            :param demand: Instance usage information since creation
+            :type demand: nova.fairness.metrics.BaseMetric.ResourceInformation
+            """
+            # If instance demands have already been collected, update the
+            # collected demands by decaying them and adding the new demands
+            if (demand.instance_name in self._interval_demands and
+                    demand.instance_name in self._full_demands):
+                last_full_demand = self._full_demands[demand.instance_name]
+                new = metrics.BaseMetric.ResourceInformation(
+                    cpu_time=demand.cpu_time - last_full_demand.cpu_time,
+                    disk_bytes_read=demand.disk_bytes_read -
+                    last_full_demand.disk_bytes_read,
+                    disk_bytes_written=demand.disk_bytes_written -
+                    last_full_demand.disk_bytes_written,
+                    network_bytes_received=demand.network_bytes_received -
+                    last_full_demand.network_bytes_received,
+                    network_bytes_transmitted=demand.network_bytes_transmitted -
+                    last_full_demand.network_bytes_transmitted,
+                    memory_used=demand.memory_used,
+                    compute_host=demand.compute_host,
+                    user_id=demand.user_id,
+                    instance_name=demand.instance_name
+                )
+                if self._interval_demands[demand.instance_name] is None:
+                    self._interval_demands[demand.instance_name] = new
+                else:
+                    old = self._interval_demands[demand.instance_name]
+                    assert isinstance(old,
+                                      metrics.BaseMetric.ResourceInformation),\
+                        "Old demand has to be a ResourceInformation object"
+                    decay_factor = float(CONF.fairness.resource_decay_factor)
+                    self._interval_demands[demand.instance_name] = \
+                        (old * (1 - decay_factor)) + (new * decay_factor)
+                self._full_demands[demand.instance_name] = demand
+                if CONF.fairness.rui_stats_enabled:
+                    self._rui_stats.add_rui(new,
+                                            self._time_since_last_collection)
+            else:
+                # If the demands have not yet been stored earlier, this can
+                # be because it's the first run of the RUI collection task
+                # or the instance has been started after the service
+                if self._time_since_last_collection is None:
+                    self._interval_demands[demand.instance_name] = None
+                else:
+                    self._interval_demands[demand.instance_name] = demand
+                self._full_demands[demand.instance_name] = demand
+
+        def add_instance_endowment(self, endowment):
+            """ Add endowment information for an instance
+
+            :param endowment: Endowment for and instance
+            :type endowment:
+            nova.fairness.metrics.BaseMetric.ResourceInformation
+            """
+            self._endowments[endowment.instance_name] = endowment
+
+        def get_instance_demands(self, instances):
+            """ Return instance demands for all active instances
+
+            Demand information stored in self._full_demands and
+            self._interval_demands could still contain suspended/stopped or
+            terminated instances so they are first removed based on the list
+            of instances gathered by the RUI collection task
+
+            :param instances: List of instances queried through nova conductor
+            :type instances: nova.objects.instance.InstanceList
+            :return: Demands of all active instances
+            :rtype: dict
+            """
+            running_instances = set([instance.name for instance in instances])
+            demand_instances = set(self._full_demands.keys())
+            terminated_instances = demand_instances - running_instances
+            for instance_name in terminated_instances:
+                self._full_demands.pop(instance_name, 0)
+                self._interval_demands.pop(instance_name, 0)
+            # After the first RUI collection run, interval demands are still
+            # None, so only full demands should be returned
+            if not all(self._interval_demands.values()):
+                return self._full_demands
+            return self._interval_demands
+
+        def get_instance_endowments(self, instances):
+            """ Return instance endowments for all active instances
+
+            Endowment information stored in self._endowments could still
+            contain suspended/stopped or terminated instances so they are
+            first removed based on the list of instances gathered by
+            the RUI collection task
+
+            :param instances: List of instances queried through nova conductor
+            :type instances: nova.objects.instance.InstanceList
+            :return: Endowmnets of all active instances
+            :rtype: dict
+            """
+            running_instances = set([instance.name for instance in instances])
+            endowment_instances = set(self._endowments.keys())
+            terminated_instances = endowment_instances - running_instances
+            for instance_name in terminated_instances:
+                del self._endowments[instance_name]
+            return self._endowments
 #
 #     target = messaging.Target(version='1.0')
 #

@@ -339,7 +339,7 @@ class FairnessManager(manager.Manager):
         :param ctxt: The periodic task context
         :type ctxt: nova.context.RequestContext
         """
-        print "Hilökjlöjk"
+        print "Hello"
         self._cloud_supply.check_readiness()
         missing_hosts = self._cloud_supply.missing_hosts
         for host in missing_hosts:
